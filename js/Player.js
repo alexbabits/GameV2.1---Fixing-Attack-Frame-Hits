@@ -114,7 +114,7 @@ export default class Player extends MatterEntity {
             Then we turn it back to false for the next anim and this process loops.
             As of now, this doesn't entirely fix the problem, it seems 'this.attack_frame === true' only
             activates at the conclusion of the anim. We narrowed it down to one frame of attack, but 
-            the flag only changes to true at the end of the anim, instead of immediately. */
+            the flag only changes to true at the end of the anim, instead of immediately, so there are still multiple hits on hero_attack_5. */
             
             if (this.anims.currentFrame.textureFrame === 'hero_attack_5'  && this.attack_frame === false) {
                 this.attack_frame === true

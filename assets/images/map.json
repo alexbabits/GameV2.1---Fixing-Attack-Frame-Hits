@@ -456,6 +456,12 @@
                  "height":640,
                  "id":66,
                  "name":"boundarytest",
+                 "properties":[
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"boundarytest"
+                        }],
                  "rotation":0,
                  "type":"boundarytest",
                  "visible":true,

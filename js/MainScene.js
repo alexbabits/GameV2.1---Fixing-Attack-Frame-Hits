@@ -26,7 +26,37 @@ export default class MainScene extends Phaser.Scene {
     
         this.map.getObjectLayer('Resources').objects.forEach(resource =>  new Resource({scene:this, resource}));
         
+        //This loads the object layer, and you get access to all the objects in that layer.
+        const boundaryLayer = map.getObjectLayer('Boundary');
+        //If it exists, and it has objects:  
+        if (boundaryLayer && boundaryLayer.objects){
+        //for each object in that object layer:
+            boundaryLayer.objects.forEach(
+        //Go through the objects and do this function:
+                (object) => {
+        //Make an invisible rectangle at each objects position. (Right now we just have the one rectangle object we made with that layer).
+                    let boundaries = this.add.rectangle((object.x+(object.width/2)), (object.y+(object.height/2)), object.width, object.height);
+        //Grab any properties associated with the object and sum/get them all via reduce method.
+        //Lastly, we use the assign method on the Object to assign all those properties we created for our object we created in our Tiled object layer.
+        //For example, we gave our 'boundarytest' object a custom property 'name' with string of 'boundarytest'.
+                    boundaries.properties = object.properties.reduce(
+                        (obj, item) => Object.assign(obj, {[item.name]: item.value}), {}
+                    );
+        //We could have also done something like this maybe to extract the properties of the object onto the object we created:
+        //let nameOfBoundary = JSON.parse(boundaries.properties.find(p => p.name== 'boundarytest').value);
+
+        //Lastly, Here, we are supposed to make the invisible rectangle interactable. Unsure if I need to do this even.???
+
+
+                }
+            );
+        }
+
+
+
         /*
+        These are notes for me previously trying to implement object layers and their objects+properties.
+
         Goal: Import and use our rectangle object we call 'boundarytest' made in our 'Boundary' object layer in Tiled.
         Use it as a zone where when stepped on by the player, takes the player to a new scene.
 
@@ -44,7 +74,7 @@ export default class MainScene extends Phaser.Scene {
         if using rectCoord way: this.sceneChange = new Phaser.Rectangle(rectCoord.x, rectCoord.y, rectCoord.width, rectCoord.height);
         if using boundarything way: this.sceneChange = new Phaser.Rectangle(boundarything.x, boundarything.y, boundarything.width, boundarything.height);
         
-        or try this: this.boundary = this.phaser
+        or try this: 
         map.getObjectLayer('Boundary').objects.forEach((test) => {
             const xyz = this.???.create(test.x, test.y, 'boundarytest');
         });
@@ -87,6 +117,12 @@ export default class MainScene extends Phaser.Scene {
     
     update(){
         this.player.update();
+        
+        //Finally, we test to see if our Object in our Object Layer is interactable by changing the player's velocity when stepped on.
+                if (this.boundaries.overlap(this.player.x || this.player.y)) {
+                    this.player.velocity.x = -3
+        }
+        
     };
 
 };
