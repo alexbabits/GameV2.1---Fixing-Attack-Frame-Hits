@@ -17,7 +17,6 @@ export default class MainScene extends Phaser.Scene {
 
     create(){
         const map = this.make.tilemap({key: 'map'});
-        //did this.map = map; just incase something isn't working
         this.map = map;
         const tileset = map.addTilesetImage('RPG Nature Tileset', 'tiles', 32, 32, 0, 2);
         const background = map.createStaticLayer('background', tileset, 0, 2);
@@ -35,23 +34,22 @@ export default class MainScene extends Phaser.Scene {
         //Go through the objects and do this function:
                 (object) => {
         //Make an invisible rectangle at each objects position. (Right now we just have the one rectangle object we made with that layer).
+        //(Our one rectangle spans the entire 'y' of the game, and is on the far right of the screen at x=620 on the right side of the dirt.)
                     let boundaries = this.add.rectangle((object.x+(object.width/2)), (object.y+(object.height/2)), object.width, object.height);
         //Grab any properties associated with the object and sum/get them all via reduce method.
         //Lastly, we use the assign method on the Object to assign all those properties we created for our object we created in our Tiled object layer.
-        //For example, we gave our 'boundarytest' object a custom property 'name' with string of 'boundarytest'.
                     boundaries.properties = object.properties.reduce(
                         (obj, item) => Object.assign(obj, {[item.name]: item.value}), {}
                     );
         //We could have also done something like this maybe to extract the properties of the object onto the object we created:
         //let nameOfBoundary = JSON.parse(boundaries.properties.find(p => p.name== 'boundarytest').value);
 
-        //Lastly, Here, we are supposed to make the invisible rectangle interactable. Unsure if I need to do this even.???
+        //Lastly, Here, we are supposed to make the invisible rectangle interactable. Unsure if I need to do this even???
 
 
                 }
             );
         }
-
 
 
         /*
@@ -61,9 +59,10 @@ export default class MainScene extends Phaser.Scene {
         Use it as a zone where when stepped on by the player, takes the player to a new scene.
 
         Process: Get/import our Object Layer called 'Boundary' with Phaser. 
-        Get/Import our rectangular object we made called 'boundarytest' with Phaser.
+        Get/Import our rectangular object we made called 'boundarytest' with Phaser. We gave it a custom property 'name' with a string of 'boundarytest'.
         Make a new rectangle be the same coordinates as the rectangle object we made in Tiled? 
-        Once properly imported, then say 'if the player steps on this invisible rectangle object, take him to the next scene.'
+        Once properly imported, then say 'if the player steps on this invisible rectangle object, change his velocity/position.'
+        Eventually want to be able to change scenes if the invisible object is walked on.
         
         Some attempts at the syntax to import and use the object:
         this.map.getObjectLayer('Boundary');
@@ -119,8 +118,9 @@ export default class MainScene extends Phaser.Scene {
         this.player.update();
         
         //Finally, we test to see if our Object in our Object Layer is interactable by changing the player's velocity when stepped on.
-                if (this.boundaries.overlap(this.player.x || this.player.y)) {
-                    this.player.velocity.x = -3
+        //I can't figure out how to extract the object from our object layer, and use it's position to do something.
+                if (this.player.x > this.boundaries.x) {
+                    this.player.y = 200
         }
         
     };
