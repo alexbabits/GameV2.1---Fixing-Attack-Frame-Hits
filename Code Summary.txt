@@ -1,0 +1,111 @@
+------------------------------------------V1.0------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+0. obtained audio/images/map for future use with ezGif sprite splitter, GAMMAFP tools, Tiled, and Aseprite.
+
+1. Created Index.html: 
+-File to launch my game. Make note of the configs.js in the 'body'.
+-Look at the phaser version, and how the matter plugin is installed.
+
+2. Created configs.js:
+-set game parameters here. Notice how parent is itself, 'configs.js'
+-Notice how scene is linked to MainScene. Once MainScene is created you can link it.
+-added .js at the end of MainScene on line 1 after it imports (auto populates that, have to add .js though).
+-added physics and plugin based on setup specification. 
+-Notice the debug is true and the scale is zoomed in 1.5x.
+
+3. Created MainScene.js:
+-exported MainScene from Phaser. Added the constructor and called the super of MainScene.
+-preloaded the hero sprite sheet, it's atlas, and it's anims.
+-created the player, added in keyboard inputs for movement. Used phasers Vector2 method.
+-created animations for movement.
+-Flipped the hero animation based on how it's moving.
+------------------------------------------V1.0------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.1------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Misc:
+-Modified this file name to Code Summary and zoom to 1.3.
+
+5. Created Player.js:
+-refactored code between MainScene.js and Player.js
+
+6. Created Sensors/Colliders for Player
+
+7. Created a Tiled Map, Imported it, and made custom collides for the water tiles, and imported the appropriate layer.
+-the spacing for the RPG nature tileset had to be 2 to make the squares match, this is reflected in the create method as (32,32,0,2);
+------------------------------------------V1.1------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.2------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8. Resource Object Layer in MainScene
+-replace that 'static' kind of 'let tree = ...' and 'let rock = ...' spawn we did, and put it in addResources to generalize. 
+-This allows us to create them on the map, rather than hard coding them in 1 by 1.
+
+9. Created Circular Colliders for our resource layer objects (tree, bush, rock).
+
+10. Fixed the yOrigin and placement of the Objects in our Object Layer to match our Tiled map.
+
+11. Added more rocks, trees, and bushes to our map.
+------------------------------------------V1.2------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.3------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+12. Refactored and condensed the resources code into a separate Resource.js folder.
+------------------------------------------V1.3------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.4------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+13. In player.js (for now) Added in our single static dragon enemy.
+------------------------------------------V1.4------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.5------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+13. In player.js (for now), added in a group of four hero sprites that spawn at random locations.
+14. Added attack animation to hero, and changed player sensor to a rectangle.
+------------------------------------------V1.5------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.6------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+15. In the player.js constructor, we call a method we created which tracks the collision between the player sensor and object colliders. 
+-We created an empty touching array in the constructor of Player.js to house these values.
+-In player.js, we created the method below our update(). This method adds the object touched to an array, and removes it once the player moves away. 
+-To console log the object names, in resources.js constructor, we let this.name = resource.type. resource.type is the name of the object in Tiled.
+------------------------------------------V1.6------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.7------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+16. Zoomed in to 1.4 in configs.js. Changed the player sensor rectangle size.
+17. In Resource.js, we created hit() method and dead property, loaded in tree/bush/rock audio, assigned the sounds to the hit property via the constructor.  
+18. Created the whackStuff method that utilizes our hit() method, dead property, and our previous heroTouchingTrigger method we made.
+19. Added in the whackStuff method in the case where our player is attacking. ***Still need to set a time interval or specific frame for hit() to activate, rather than just every game tick that the attack animation is active. 
+------------------------------------------V1.7------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.8------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+20. Created DropItem.js file.
+-exported it as a class via phaser. Added a constructor with data, called super and passed in the data I wanted.
+-Customized the items colliders.
+-Added pickup sounds and function.
+21. In Player.js:
+-Created createPickupCollisions method to deal with item collisions. Called it in the constructor and passed in the player collider.
+-Added the items spritesheet in preload.
+22. In Resource.js:
+-We define the drops property in the constructor, parsing the string as an array.
+-We added to the hit method, if object is dead, then drop the corresponding item.
+------------------------------------------V1.8------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V1.9------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+23. Created MatterEntity.js to keep track of commonalities between all things matter - resources, player, enemies, etc.
+-Heavily modified Resource.js and Player.js, put some things into MatterEntity.js
+------------------------------------------V1.9------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V2.0------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+24. Iterated the player with an iterator, some object functionalities do not work (anims/movement) but collisions and pickup function and sound work.
+------------------------------------------V2.0------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V2.1------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+25. Added Chamfer to player's collider.
+26. Found the proper syntax to fix the whackStuff() issue getting called every tick. 
+- Used 'console.log(this.anims) to see what was going on. We see currentFrame is the animation frame, and textureFrame is the current specific anim displayed. So we link them together.
+27. This didn't fix the problem entirely, we needed to add a flag so that the hit method gets called only on the first appearance of the frame displayed,
+    rather than for the whole frame, since a whole frame still has multiple game ticks.
+- Using a flag, our attack condition's logic now looks like this:
+4444|5|5556666
+ffff|f|tttffff
+____|H|_______
+Moving through frame 4, the flag is false, and only the first tick of 5, it is still false. Immediately it becomes true, which stops the hitting for the rest of frame 5 based on our conditional logic.
+So then we move on to frame 6 and so on being false again. (We also just set the flag to false in the constructor as a default).
+28. Added map2 as a second map, and modified original map.json to include another object layer 'Boundary' for the future scene transitions.
+
+------------------------------------------V2.1------------------------------------------------------------------------------------------------------------------------------------------------------------------------
