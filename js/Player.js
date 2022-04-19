@@ -4,6 +4,10 @@ class PlayerState {
 
     constructor(player) {
         this.player = player
+        this.attackingState = new PlayerAttackingState(this)
+        this.idleState = new PlayerIdleState(this)
+        this.walkingState = new PlayerWalkingState(this)
+        this.currentState = this.idleState
     }
 
     enter() {
@@ -139,6 +143,9 @@ export default class Player extends MatterEntity {
 
         super({...data, health: 20, drops:[], name:'player'});
         this.touching = [];
+        //added PlayerState to our Player Class
+        this.playerState = new PlayerState(this);
+
         //Here we set our default value of our flag associated with our whackStuff method to false.
         this.attack_frame = false;
         const {Body,Bodies} = Phaser.Physics.Matter.Matter;
