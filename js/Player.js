@@ -4,11 +4,9 @@ class PlayerState {
 
     constructor(player) {
         this.player = player
-        this.attackingState = new PlayerAttackingState(this)
-        this.idleState = new PlayerIdleState(this)
-        this.walkingState = new PlayerWalkingState(this)
-        this.currentState = this.idleState
     }
+        //Allows us to use 'this.anims' rather than 'this.player.anims' in our sub classes.
+    get anims() {return this.player.anims};
 
     enter() {
         // not implemented
@@ -64,7 +62,7 @@ class PlayerState {
 
     handleKeys() {
         // not implemented
-        // Assuming this will handle ALL the key and/or future mouse inputs for ALL the states described below?
+        // Assuming this will handle ALL the key and/or future mouse inputs for ALL the states of the player.
     }
 }
 
@@ -129,7 +127,7 @@ class PlayerAttackingState extends PlayerState {
            } else {
                this.anims.play('hero_idle', true);
            }
-        //This always sets our attack_frame trigger to false while not attacking (spacebar), so the flag always triggers in the correct way for our whackStuff() method.
+
         if(this.inputKeys.space.isDown === false) {
             this.attack_frame = false
         }
@@ -143,11 +141,15 @@ export default class Player extends MatterEntity {
 
         super({...data, health: 20, drops:[], name:'player'});
         this.touching = [];
-        //added PlayerState to our Player Class
-        this.playerState = new PlayerState(this);
+        // Instantiating the different player states.
+        this.attackingState = new PlayerAttackingState(this)
+        this.idleState = new PlayerIdleState(this)
+        this.walkingState = new PlayerWalkingState(this)
+        // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
+        this.goto(this.idleState)
 
-        //Here we set our default value of our flag associated with our whackStuff method to false.
         this.attack_frame = false;
+
         const {Body,Bodies} = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y, 22, 32, {chamfer: {radius: 10}, isSensor:false, label:'playerCollider'});
         let playerSensor = Bodies.rectangle(this.x, this.y, 46, 8, {isSensor:true, label: 'playerSensor'});
@@ -169,42 +171,19 @@ export default class Player extends MatterEntity {
         scene.load.audio('player', 'assets/audio/player.mp3');
     }
 
-
+        //Since we have all our states instantiated on the player, we can simply invoke the update method on the currentState.
     update(){
-        const speed = 4;
-        let playerVelocity = new Phaser.Math.Vector2();
-        if(this.inputKeys.left.isDown) {
-            this.flipX = true;
-            playerVelocity.x = -1;
-        } else if (this.inputKeys.right.isDown) {
-            this.flipX = false;
-            playerVelocity.x = 1;
-        } else if (this.inputKeys.up.isDown) {
-            playerVelocity.y = -1;
-        } else if (this.inputKeys.down.isDown) {
-            playerVelocity.y = 1;
-        }
-
-        //normalize makes diagonals same speed if needed, if I decide to allow diagonal movement. "playerVelocity.normalize();"
-
-        playerVelocity.scale(speed);
-
-        this.setVelocity(playerVelocity.x,playerVelocity.y);
-
-        if(this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
-            this.anims.play('hero_attack', true);
-            this.whackStuff();
-           } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
-                this.anims.play('hero_run', true);
-           } else {
-               this.anims.play('hero_idle', true);
-           }
-        //This always sets our attack_frame trigger to false while not attacking (spacebar), so the flag always triggers in the correct way for our whackStuff() method.
-        if(this.inputKeys.space.isDown === false) {
-            this.attack_frame = false
-        }
-        
+        this.currentState.update();
     };
+
+    //Our goto method, it handles the changing of our player's current state (.attackingState, .idleState, .walkingState, etc.).
+    goto(state) {
+        if (this.currentState) {
+          this.currentState.exit();
+        }
+        this.currentState = state;
+        this.currentState.enter();
+      }
 
         heroTouchingTrigger(playerSensor){
 
