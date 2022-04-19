@@ -112,15 +112,15 @@ export default class Player extends MatterEntity {
             /* We check if the current animation is hero attack 5 and if the flag is false (default). If it is, we immediately
             turn it to true, and so the hit method gets called just for that first instance of hero attack 5.
             Then we turn it back to false for the next anim and this process loops.
-            As of now, this doesn't entirely fix the problem, it seems 'this.attack_frame === true' only
-            activates at the conclusion of the anim. We narrowed it down to one frame of attack, but 
-            the flag only changes to true at the end of the anim, instead of immediately, so there are still multiple hits on hero_attack_5. */
+            We found out we needed single '=' to reassign the flag's value.
+                
+            The only problem now: When the player goes to attack a resource after attacking one previously, the first hit doesn't register.*/
             
             if (this.anims.currentFrame.textureFrame === 'hero_attack_5'  && this.attack_frame === false) {
-                this.attack_frame === true
+                this.attack_frame = true
                 gameObject.hit()
             } else if (this.anims.currentFrame.textureFrame === 'hero_attack_6') {
-                this.attack_frame === false
+                this.attack_frame = false
             }         
 
                 if(gameObject.dead) gameObject.destroy();
