@@ -59,6 +59,10 @@ export default class Player extends MatterEntity {
            } else {
                this.anims.play('hero_idle', true);
            }
+        //This always sets our attack_frame trigger to false while not attacking (spacebar), so the flag always triggers in the correct way for our whackStuff() method.
+        if(this.inputKeys.space.isDown === false) {
+            this.attack_frame = false
+        }
         
     };
 
