@@ -1,5 +1,138 @@
 import MatterEntity from "./MatterEntity.js";
 
+class PlayerState {
+
+    constructor(player) {
+        this.player = player
+    }
+
+    enter() {
+        // not implemented
+    }
+
+    exit() {
+        // not implemented
+    }
+    
+    update() {
+        /* not implemented
+        In here, place a switch statement (else if) for our different states (idle, walk, attack) we made below.
+        For example, we'll say something like, 'if PlayerState is currently idle, then make sure only PlayerIdleState is active.
+
+        Attempt below: (invoking an entire class on this.player seems odd?)
+
+        Switch (PlayerState) {
+            case (PlayerIdleState === active):
+                this.player.PlayerIdleState();
+                break;
+            case (PlayerWalkingState === active):
+                this.player.PlayerWalkingState();
+                break;
+            case (PlayerAttackingState === active):
+                this.player.AttackingState();
+                break;
+            default:
+                console.log('invalid state');
+                break;
+        }
+
+        So I also need a gotoState('state here') function that invokes goto'state'() methods via switch 
+
+        Attempt below:
+
+        Switch (goto) {
+            case (gotoState(PlayerIdleState)):
+                gotoPlayerIdleState();
+                break;
+            case (gotoState(PlayerWalkingState)):
+                gotoPlayerWalkingState();
+                break;
+            case (gotoState(PlayerAttackingState)):
+                gotoPlayerAttackingState();
+                break;
+            default:
+                console.log('invalid goto state);
+                break;
+        }
+
+        */
+    }
+
+    handleKeys() {
+        // not implemented
+        // Assuming this will handle ALL the key and/or future mouse inputs for ALL the states described below?
+    }
+}
+
+class PlayerIdleState extends PlayerState {
+    
+    enter() {
+        this.player.anims.play('hero_idle', true);
+        this.player.playerVelocity.x = 0
+        this.player.playerVelocity.y = 0
+    }
+
+    exit() {
+        // stop the animation
+        this.player.anims.stop();
+    }
+}
+
+class PlayerWalkingState extends PlayerState {
+    enter() {
+        this.player.anims.play("hero_run", true);
+    }
+
+    update() {
+        const speed = 4;
+        this.player.playerVelocity = new Phaser.Math.Vector2();
+        this.handleKeys();
+        this.player.playerVelocity.scale(speed);
+        this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);        
+    }
+
+
+    handleKeys() {
+        if (this.player.inputKeys.left.isDown) {
+            this.player.flipX = true;
+            this.player.playerVelocity.x = -1;
+        } else if (this.player.inputKeys.right.isDown) {
+            this.player.flipX = false;
+            this.player.playerVelocity.x = 1;
+        } else if (this.player.inputKeys.up.isDown) {
+            this.player.playerVelocity.y = -1;
+        } else if (this.player.inputKeys.down.isDown) {
+            this.player.playerVelocity.y = 1;
+        } 
+    }
+}
+
+class PlayerAttackingState extends PlayerState {
+    enter() {
+        this.player.anims.play("hero_attack", true);
+    }
+
+    update() {
+        this.handleKeys();
+    }
+
+    handleKeys() {
+        if(this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
+            this.anims.play('hero_attack', true);
+            this.whackStuff();
+           } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
+                this.anims.play('hero_run', true);
+           } else {
+               this.anims.play('hero_idle', true);
+           }
+        //This always sets our attack_frame trigger to false while not attacking (spacebar), so the flag always triggers in the correct way for our whackStuff() method.
+        if(this.inputKeys.space.isDown === false) {
+            this.attack_frame = false
+        }
+    }
+}
+
+
 export default class Player extends MatterEntity {
     constructor(data){
         let {scene, x , y, texture, frame} = data;
@@ -116,9 +249,7 @@ export default class Player extends MatterEntity {
             /* We check if the current animation is hero attack 5 and if the flag is false (default). If it is, we immediately
             turn it to true, and so the hit method gets called just for that first instance of hero attack 5.
             Then we turn it back to false for the next anim and this process loops.
-            We found out we needed single '=' to reassign the flag's value.
-                
-            The only problem now: When the player goes to attack a resource after attacking one previously, the first hit doesn't register.*/
+            We found out we needed single '=' to reassign the flag's value. */
             
             if (this.anims.currentFrame.textureFrame === 'hero_attack_5'  && this.attack_frame === false) {
                 this.attack_frame = true
