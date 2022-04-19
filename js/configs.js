@@ -1,4 +1,5 @@
 import MainScene from "./MainScene.js";
+import map2 from "./map2.js";
 
 const config = {
   width:640,
@@ -6,7 +7,8 @@ const config = {
   backgroundColor: '#999999',
   type: Phaser.AUTO,
   parent: 'configs',
-  scene:[MainScene],
+  //Added map2 for our second scene here:
+  scene:[MainScene, map2],
   scale: {
     zoom:1.4,
   },

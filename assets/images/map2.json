@@ -8,7 +8,7 @@
          "encoding":"base64",
          "height":20,
          "id":1,
-         "name":"Tile Layer 1",
+         "name":"background",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,

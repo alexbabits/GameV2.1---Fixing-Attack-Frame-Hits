@@ -119,8 +119,11 @@ export default class MainScene extends Phaser.Scene {
         
         //Finally, we test to see if our Object in our Object Layer is interactable by changing the player's velocity when stepped on.
         //I can't figure out how to extract the object from our object layer, and use it's position to do something.
-                if (this.player.x > this.boundaries.x) {
-                    this.player.y = 200
+        
+        //Can walk to second scene now (lots of bugs and fixes needed, but works kinda).
+                if (this.player.x > 600) {
+                    this.scene.stop('MainScene')
+                    this.scene.start('SecondScene')
         }
         
     };

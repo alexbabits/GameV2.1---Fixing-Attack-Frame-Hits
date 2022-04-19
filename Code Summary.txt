@@ -109,3 +109,11 @@ So then we move on to frame 6 and so on being false again. (We also just set the
 28. Added map2 as a second map, and modified original map.json to include another object layer 'Boundary' for the future scene transitions.
 
 ------------------------------------------V2.1------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------V2.2------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+29. Added map2.js as another scene. 
+-Created scene transition in MainScene and SecondScene updates. (Right now just have it based on raw position rather than my Tiled Map Object).
+-Modified configs.js and index.html to accomadate for the scene. Also renamed the tile layer in map2.json to 'background'
+-Current bug: Everything works fine, but when I transition from one scene, and then back to the original, It freezes when I try to hit resources (but not the spawned players).
+-Need to figure out spawn points and proper data transfer between scenes.
+------------------------------------------V2.2------------------------------------------------------------------------------------------------------------------------------------------------------------------------
