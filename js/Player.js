@@ -5,7 +5,7 @@ class PlayerState {
     constructor(player) {
         this.player = player
     }
-        //Allows us to use 'this.anims' rather than 'this.player.anims' in our sub classes.
+        // Allows us to use 'this.anims' rather than 'this.player.anims' in our sub classes.
     get anims() {return this.player.anims};
 
     enter() {
@@ -18,43 +18,15 @@ class PlayerState {
     
     update() {
         /* not implemented
-        In here, place a switch statement (else if) for our different states (idle, walk, attack) we made below.
-        For example, we'll say something like, 'if PlayerState is currently idle, then make sure only PlayerIdleState is active.
 
-        Attempt below: (invoking an entire class on this.player seems odd?)
+        if (we are pressing WASD) {
+            goto(this.walkingState)
 
-        Switch (PlayerState) {
-            case (PlayerIdleState === active):
-                this.player.PlayerIdleState();
-                break;
-            case (PlayerWalkingState === active):
-                this.player.PlayerWalkingState();
-                break;
-            case (PlayerAttackingState === active):
-                this.player.AttackingState();
-                break;
-            default:
-                console.log('invalid state');
-                break;
-        }
-
-        So I also need a gotoState('state here') function that invokes goto'state'() methods via switch 
-
-        Attempt below:
-
-        Switch (goto) {
-            case (gotoState(PlayerIdleState)):
-                gotoPlayerIdleState();
-                break;
-            case (gotoState(PlayerWalkingState)):
-                gotoPlayerWalkingState();
-                break;
-            case (gotoState(PlayerAttackingState)):
-                gotoPlayerAttackingState();
-                break;
-            default:
-                console.log('invalid goto state);
-                break;
+        } else if (we are pressing spacebar) {
+            goto(this.attackingState)
+            
+        } else (we are doing neither) {
+            goto(this.idleState) 
         }
 
         */
