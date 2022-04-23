@@ -111,6 +111,7 @@ export default class MainScene extends Phaser.Scene {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+            shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
         });
 
         this.dragon = new Phaser.Physics.Matter.Sprite(this.matter.world, Phaser.Math.Between(320,540), Phaser.Math.Between(40, 160), 'enemies', 'dragon_idle_1');
@@ -121,14 +122,23 @@ export default class MainScene extends Phaser.Scene {
     
     update(){
         this.player.update();
+
+        if (this.player.x > 500) {
+            this.player.setTint(0xff0000);
+        }
         
         //Finally, we test to see if our Object in our Object Layer is interactable by changing the player's velocity when stepped on.
         //I can't figure out how to extract the object from our object layer, and use it's position to do something.
         
         //Can walk to second scene now (lots of bugs and fixes needed, but works kinda).
                 if (this.player.x > 600) {
-                    this.scene.stop('MainScene')
-                    this.scene.start('SecondScene')
+                    this.cameras.main.fade(400, 0, 0, 0, false, function(camera, progress) {
+                        if (progress > .99) {
+                            this.scene.stop('MainScene')
+                            this.scene.start('SecondScene')
+                        }
+                    });
+
         }
         
     };

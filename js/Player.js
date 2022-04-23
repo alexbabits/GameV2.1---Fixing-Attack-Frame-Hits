@@ -31,7 +31,7 @@ export default class Player extends MatterEntity {
 
 
     update(){
-        const speed = 4;
+        let speed = 4;
         let playerVelocity = new Phaser.Math.Vector2();
         if(this.inputKeys.left.isDown) {
             this.flipX = true;
@@ -43,8 +43,7 @@ export default class Player extends MatterEntity {
             playerVelocity.y = -1;
         } else if (this.inputKeys.down.isDown) {
             playerVelocity.y = 1;
-        }
-
+        } 
         //normalize makes diagonals same speed if needed, if I decide to allow diagonal movement. "playerVelocity.normalize();"
 
         playerVelocity.scale(speed);
@@ -54,8 +53,12 @@ export default class Player extends MatterEntity {
         if(this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
             this.anims.play('hero_attack', true);
             this.whackStuff();
-           } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
+           } else if (playerVelocity.x !== 0 || playerVelocity.y !== 0) {
                 this.anims.play('hero_run', true);
+           } else if (this.inputKeys.shift.isDown && playerVelocity.x !== 0 || playerVelocity.y !== 0) {
+                this.anims.play('hero_walk', true);
+                playerVelocity.x = speed/2;
+                playerVelocity.y = speed/2;
            } else {
                this.anims.play('hero_idle', true);
            }
