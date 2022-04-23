@@ -20,13 +20,18 @@ class PlayerState {
         /* not implemented
 
         if (we are pressing WASD) {
-            this.goto(this.walkingState)
+            this.goto(this.runningState)
 
         } else if (we are pressing spacebar) {
             this.goto(this.attackingState)
 
         } else (we are doing neither) {
             this.goto(this.idleState) 
+        }
+
+        if (we are pressing WASD and pressing shift) {
+            this.goto(this.walkingState)
+
         }
 
         */
@@ -36,7 +41,7 @@ class PlayerState {
         // not implemented
         /* Assuming this will handle ALL the key and/or future mouse inputs for ALL the states of the player.
 
-        this.walkingState.handlekeys();
+        this.runningState.handlekeys();
         this.attackingState.handlekeys();
         this.idleState.handlekeys();
 
@@ -58,8 +63,9 @@ class PlayerIdleState extends PlayerState {
         this.player.anims.stop();
     }
 }
+    //Renamed PlayerWalkingState to PlayerRunningState to accurately describe that the player is running rather than walking.
+class PlayerRunningState extends PlayerState {
 
-class PlayerWalkingState extends PlayerState {
     enter() {
         this.player.anims.play("hero_run", true);
     }
@@ -88,7 +94,40 @@ class PlayerWalkingState extends PlayerState {
     }
 }
 
+// Created PlayerWalkingState to handle the player walking state.
+
+class PlayerWalkingState extends PlayerState {
+
+    enter() {
+        this.player.anims.play("hero_walk", true);
+    }
+
+    update() {
+        const speed = 2;
+        this.player.playerVelocity = new Phaser.Math.Vector2();
+        this.handleKeys();
+        this.player.playerVelocity.scale(speed);
+        this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);        
+    }
+
+
+    handleKeys() {
+        if (this.player.inputKeys.left.isDown) {
+            this.player.flipX = true;
+            this.player.playerVelocity.x = -1;
+        } else if (this.player.inputKeys.right.isDown) {
+            this.player.flipX = false;
+            this.player.playerVelocity.x = 1;
+        } else if (this.player.inputKeys.up.isDown) {
+            this.player.playerVelocity.y = -1;
+        } else if (this.player.inputKeys.down.isDown) {
+            this.player.playerVelocity.y = 1;
+        } 
+    }
+}
+
 class PlayerAttackingState extends PlayerState {
+    
     enter() {
         this.player.anims.play("hero_attack", true);
     }
@@ -123,6 +162,7 @@ export default class Player extends MatterEntity {
         // Instantiating the different player states.
         this.attackingState = new PlayerAttackingState(this)
         this.idleState = new PlayerIdleState(this)
+        this.runningState = new PlayerRunningState(this)
         this.walkingState = new PlayerWalkingState(this)
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
         this.goto(this.idleState)
@@ -155,7 +195,7 @@ export default class Player extends MatterEntity {
         this.currentState.update();
     };
 
-    //Our goto method, it handles the changing of our player's current state (.attackingState, .idleState, .walkingState, etc.).
+    //Our goto method, it handles the changing of our player's current state (.attackingState, .idleState, .runningState, etc.).
     goto(state) {
         if (this.currentState) {
           this.currentState.exit();
