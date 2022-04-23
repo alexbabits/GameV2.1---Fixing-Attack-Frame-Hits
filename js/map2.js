@@ -13,6 +13,7 @@ export default class SecondScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map2','assets/images/map2.json');
         this.load.atlas('enemies', 'assets/images/enemies.png', 'assets/images/enemies_atlas.json');
         this.load.animation('enemies_anims', 'assets/images/enemies_anims.json');
+        this.load.image('cursor', 'assets/images/cursor.png');
     };
 
     create(){
@@ -56,6 +57,20 @@ export default class SecondScene extends Phaser.Scene {
         this.add.existing(this.dragon);
         this.dragon.setFixedRotation();
         this.dragon.setStatic(true);
+
+        //create particles
+        this.particles = this.add.particles('cursor');
+        this.emitter = this.particles.createEmitter({
+            x: { min:0, max: 400},
+            y: 0,
+            lifespan: 2000,
+            speedY: {min: 10, max: 200},
+            scale: 0.2,
+            quantity: 10,
+            blendMode: 'ADD'
+        })
+
+
     };
     
     update(){
