@@ -75,7 +75,7 @@ export default class SecondScene extends Phaser.Scene {
     
     update(){
         this.player.update();
-        //Can walk back and forth between scenes now.
+
         if (this.player.x > 400) {
             this.player.setTint(0xff0000);
         }
