@@ -55,13 +55,16 @@ export default class Player extends MatterEntity {
             this.whackStuff();
            } else if (playerVelocity.x !== 0 || playerVelocity.y !== 0) {
                 this.anims.play('hero_run', true);
-           } else if (this.inputKeys.shift.isDown && playerVelocity.x !== 0 || playerVelocity.y !== 0) {
-                this.anims.play('hero_walk', true);
-                playerVelocity.x = speed/2;
-                playerVelocity.y = speed/2;
            } else {
                this.anims.play('hero_idle', true);
            }
+
+        /*if(this.inputKeys.shift.isDown && playerVelocity.x !== 0 || playerVelocity.y !== 0) {
+            this.anims.play('hero_walk', true);
+            playerVelocity.x = speed/2;
+            playerVelocity.y = speed/2;
+        }*/
+        
         //This always sets our attack_frame trigger to false while not attacking (spacebar), so the flag always triggers in the correct way for our whackStuff() method.
         if(this.inputKeys.space.isDown === false) {
             this.attack_frame = false
