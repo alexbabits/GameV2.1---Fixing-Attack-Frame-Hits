@@ -20,13 +20,13 @@ class PlayerState {
         /* not implemented
 
         if (we are pressing WASD) {
-            goto(this.walkingState)
+            this.goto(this.walkingState)
 
         } else if (we are pressing spacebar) {
-            goto(this.attackingState)
-            
+            this.goto(this.attackingState)
+
         } else (we are doing neither) {
-            goto(this.idleState) 
+            this.goto(this.idleState) 
         }
 
         */
@@ -34,7 +34,14 @@ class PlayerState {
 
     handleKeys() {
         // not implemented
-        // Assuming this will handle ALL the key and/or future mouse inputs for ALL the states of the player.
+        /* Assuming this will handle ALL the key and/or future mouse inputs for ALL the states of the player.
+
+        this.walkingState.handlekeys();
+        this.attackingState.handlekeys();
+        this.idleState.handlekeys();
+
+
+        */
     }
 }
 
