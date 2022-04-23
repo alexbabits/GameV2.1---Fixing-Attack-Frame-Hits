@@ -99,6 +99,11 @@ export default class MainScene extends Phaser.Scene {
         this.player = new Player({scene:this, x:Phaser.Math.Between(150,400), y:Phaser.Math.Between(150, 350), texture:'hero', frame:'hero_idle_1'});
         
         }
+        let camera = this.cameras.main;
+        camera.zoom = 1.4;
+        camera.startFollow(this.player);
+        camera.setLerp(0.1,0.1);
+        camera.setBounds(0,0,this.game.config.width,this.game.config.heigth);
 
         this.player.inputKeys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
