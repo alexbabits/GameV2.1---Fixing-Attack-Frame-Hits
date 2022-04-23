@@ -62,7 +62,8 @@ class PlayerIdleState extends PlayerState {
         // stop the animation
         this.player.anims.stop();
     }
-}
+};
+
     //Renamed PlayerWalkingState to PlayerRunningState to accurately describe that the player is running rather than walking.
 class PlayerRunningState extends PlayerState {
 
@@ -92,7 +93,7 @@ class PlayerRunningState extends PlayerState {
             this.player.playerVelocity.y = 1;
         } 
     }
-}
+};
 
 // Created PlayerWalkingState to handle the player walking state.
 
@@ -112,22 +113,22 @@ class PlayerWalkingState extends PlayerState {
 
 
     handleKeys() {
-        if (this.player.inputKeys.left.isDown) {
+        if (this.player.inputKeys.left.isDown && this.player.inputKeys.shift.isDown) {
             this.player.flipX = true;
             this.player.playerVelocity.x = -1;
-        } else if (this.player.inputKeys.right.isDown) {
+        } else if (this.player.inputKeys.right.isDown && this.player.inputKeys.shift.isDown) {
             this.player.flipX = false;
             this.player.playerVelocity.x = 1;
-        } else if (this.player.inputKeys.up.isDown) {
+        } else if (this.player.inputKeys.up.isDown && this.player.inputKeys.shift.isDown) {
             this.player.playerVelocity.y = -1;
-        } else if (this.player.inputKeys.down.isDown) {
+        } else if (this.player.inputKeys.down.isDown && this.player.inputKeys.shift.isDown) {
             this.player.playerVelocity.y = 1;
         } 
     }
-}
+};
 
 class PlayerAttackingState extends PlayerState {
-    
+
     enter() {
         this.player.anims.play("hero_attack", true);
     }
@@ -150,7 +151,29 @@ class PlayerAttackingState extends PlayerState {
             this.attack_frame = false
         }
     }
-}
+
+    whackStuff(){
+        this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
+        this.touching.forEach(gameObject =>{
+
+        /* We check if the current animation is hero attack 5 and if the flag is false (default). If it is, we immediately
+        turn it to true, and so the hit method gets called just for that first instance of hero attack 5.
+        Then we turn it back to false for the next anim and this process loops.
+        We found out we needed single '=' to reassign the flag's value. */
+        
+        if (this.anims.currentFrame.textureFrame === 'hero_attack_5'  && this.attack_frame === false) {
+            this.attack_frame = true
+            gameObject.hit()
+        } else if (this.anims.currentFrame.textureFrame === 'hero_attack_6') {
+            this.attack_frame = false
+        }         
+
+            if(gameObject.dead) gameObject.destroy();
+    });
+    //console.log(this.anims) to see what's going on with all things related to our animation state.
+  }; 
+
+};
 
 
 export default class Player extends MatterEntity {
@@ -204,7 +227,9 @@ export default class Player extends MatterEntity {
         this.currentState.enter();
       }
 
-        heroTouchingTrigger(playerSensor){
+    //Sensor Trigger between the player and objects.
+
+      heroTouchingTrigger(playerSensor){
 
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
@@ -226,6 +251,8 @@ export default class Player extends MatterEntity {
         });
 
     };
+    
+    //Collider Trigger between the player and objects that can be picked up.
 
         createPickupCollisions(playerCollider){
 
@@ -246,27 +273,6 @@ export default class Player extends MatterEntity {
         });
 
     };
-
-         whackStuff(){
-            this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
-            this.touching.forEach(gameObject =>{
-
-            /* We check if the current animation is hero attack 5 and if the flag is false (default). If it is, we immediately
-            turn it to true, and so the hit method gets called just for that first instance of hero attack 5.
-            Then we turn it back to false for the next anim and this process loops.
-            We found out we needed single '=' to reassign the flag's value. */
-            
-            if (this.anims.currentFrame.textureFrame === 'hero_attack_5'  && this.attack_frame === false) {
-                this.attack_frame = true
-                gameObject.hit()
-            } else if (this.anims.currentFrame.textureFrame === 'hero_attack_6') {
-                this.attack_frame = false
-            }         
-
-                if(gameObject.dead) gameObject.destroy();
-        });
-        //console.log(this.anims) to see what's going on with all things related to our animation state.
-      }; 
 
 };
 
