@@ -5,8 +5,8 @@ class PlayerState {
     constructor(player) {
         this.player = player
     }
-        // Allows us to use 'this.anims' rather than 'this.player.anims' in our sub classes.
-    get anims() {return this.player.anims};
+    get anims() {return this.player.anims}; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
+    get touching() {export this.player.touching}; // Like above, but for 'this.player.touching'
 
     enter() {
         // not implemented
