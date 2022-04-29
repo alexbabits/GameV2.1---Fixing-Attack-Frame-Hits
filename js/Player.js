@@ -1,7 +1,7 @@
 import MatterEntity from "./MatterEntity.js";
 
 class PlayerState {
-    constructor(player) { this.player = player }
+    constructor(player) { this.player = player; }
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
     get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
@@ -23,9 +23,7 @@ class PlayerIdleState extends PlayerState {
     update() { this.handleKeys(); }
 
     handleKeys() {
-        for (key in [left, right, up, down]) if (this.player.inputKeys.$key.isDown) {
-            this.goto(this.player.runningState);
-        }
+        if (this.player.movementKeyIsDown() == true) this.goto(this.player.runningState);
         if (this.player.inputKeys.space.isDown) {
             this.goto(this.player.attackingState);
         }
@@ -40,7 +38,6 @@ class PlayerRunningState extends PlayerState {
     update() {
         this.handleKeys();
         const speed = 4;
-        this.player.playerVelocity = new Phaser.Math.Vector2();
         this.player.playerVelocity.scale(speed);
         this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);
     }
@@ -120,6 +117,8 @@ export default class Player extends MatterEntity {
             }
         );
 
+        this.playerVelocity = new Phaser.Math.Vector2();
+
         // For collisions?
         this.setFixedRotation();
         this.touching = [];
@@ -128,12 +127,12 @@ export default class Player extends MatterEntity {
         this.setExistingBody(compoundBody);
 
         // Instantiating PlayerStates.
-        this.idleState = new PlayerIdleState(this)
-        this.attackingState = new PlayerAttackingState(this)
-        this.runningState = new PlayerRunningState(this)
+        this.idleState = new PlayerIdleState(this);
+        this.attackingState = new PlayerAttackingState(this);
+        this.runningState = new PlayerRunningState(this);
 
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
-        this.goto(this.idleState)
+        this.goto(this.idleState);
     };
 
     static preload(scene) {
@@ -156,7 +155,7 @@ export default class Player extends MatterEntity {
     }
 
     movementKeyIsDown() {
-        let keys = this.player.inputKeys
+        let keys = this.inputKeys
         if (keys.left.isDown || keys.right.isDown || keys.down.isDown || keys.up.isDown) {
             return true;
         } else return false
