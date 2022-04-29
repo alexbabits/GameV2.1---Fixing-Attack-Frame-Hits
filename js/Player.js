@@ -23,9 +23,7 @@ class PlayerIdleState extends PlayerState {
 };
 
 class PlayerRunningState extends PlayerState {
-    enter() {
-        this.player.anims.play("hero_run", true);
-    }
+    enter() { this.player.anims.play("hero_run", true); }
 
     update() {
         const speed = 4;
@@ -39,15 +37,20 @@ class PlayerRunningState extends PlayerState {
         if (this.player.inputKeys.left.isDown) {
             this.player.flipX = true;
             this.player.playerVelocity.x = -1;
-        } else if (this.player.inputKeys.right.isDown) {
+        }
+        if (this.player.inputKeys.right.isDown) {
             this.player.flipX = false;
             this.player.playerVelocity.x = 1;
-        } else if (this.player.inputKeys.up.isDown) {
+        }
+        if (this.player.inputKeys.up.isDown) {
             this.player.playerVelocity.y = -1;
-        } else if (this.player.inputKeys.down.isDown) {
+        }
+        if (this.player.inputKeys.down.isDown) {
             this.player.playerVelocity.y = 1;
         }
     }
+
+    exit() { this.anims.stop(); }
 };
 
 class PlayerWalkingState extends PlayerState {
