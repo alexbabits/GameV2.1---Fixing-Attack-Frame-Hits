@@ -60,6 +60,15 @@ class PlayerRunningState extends PlayerState {
         if (this.player.inputKeys.down.isDown) {
             this.player.playerVelocity.y = 1;
         }
+
+        const allKeysUp = () => {
+            let keys = this.player.inputKeys
+            if (keys.left.isUp && keys.right.isUp && keys.down.isUp && keys.up.isUp) {
+                return true;
+            } else return false
+        };
+
+        if (allKeysUp()) this.goto(this.player.idleState);
     }
 
     exit() { this.anims.stop(); }
