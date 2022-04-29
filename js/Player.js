@@ -61,14 +61,7 @@ class PlayerRunningState extends PlayerState {
             this.player.playerVelocity.y = 1;
         }
 
-        const allKeysUp = () => {
-            let keys = this.player.inputKeys
-            if (keys.left.isUp && keys.right.isUp && keys.down.isUp && keys.up.isUp) {
-                return true;
-            } else return false
-        };
-
-        if (allKeysUp()) this.goto(this.player.idleState);
+        if (this.player.movementKeyIsDown() == false) this.goto(this.player.idleState);
     }
 
     exit() { this.anims.stop(); }
@@ -77,24 +70,27 @@ class PlayerRunningState extends PlayerState {
 class PlayerAttackingState extends PlayerState {
     enter() { this.anims.play("hero_attack", true); this.attack_frame = false; }
 
-    update() { this.handleKeys(); }
+    update() {
+        this.handleKeys();
+        let touchingTargets = this.touching.filter(gameObject.hit && gameObject.alive);
 
-    handleKeys() { }
-
-    // TODO Use this
-    whackStuff() {
-        this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
-        this.touching.forEach(gameObject => {
-            if (this.anims.currentFrame.textureFrame === 'hero_attack_5' && this.attack_frame === false) {
-                this.attack_frame = true
-                gameObject.hit()
-            } else if (this.anims.currentFrame.textureFrame === 'hero_attack_6') {
-                this.attack_frame = false
+        touchingTargets.forEach(target => {
+            if (frame === 'hero_attack_6') {
+                this.attack_frame = false;
+            } else if (this.anims.currentFrame.textureFrame === 'hero_attack_5' && this.attack_frame === false) {
+                this.attack_frame = true;
+                target.hit;
             }
 
-            if (gameObject.dead) gameObject.destroy();
+            if (target.dead === true) target.destroy();
         });
-    };
+    }
+
+    handleKeys() {
+        if (this.attack_frame === false) {
+            if (this.player.movementKeyIsDown() == true) this.goto(this.player.runningState); else this.goto(this.player.idleState);
+        }
+    }
 
     exit() { this.anims.stop; this.attack_frame = false; }
 };
@@ -159,30 +155,12 @@ export default class Player extends MatterEntity {
         this.currentState.enter();
     }
 
-    // TODO use the goto(), managing states
-    // if(we are pressing WASD) {
-    //     this.goto(this.runningState)
-
-    // } else if(we are pressing spacebar) {
-    //     this.goto(this.attackingState)
-
-    // } else(we are doing neither) {
-    //     this.goto(this.idleState)
-    // }
-
-    // if(we are pressing WASD and pressing shift) {
-    //     this.goto(this.walkingState)
-    // }
-
-    // This should be converted into goto() logic
-    // if (this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
-    //     this.anims.play('hero_attack', true);
-    //     this.whackStuff();
-    // } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
-    //     this.anims.play('hero_run', true);
-    // } else {
-    //     this.anims.play('hero_idle', true);
-    // }
+    movementKeyIsDown() {
+        let keys = this.player.inputKeys
+        if (keys.left.isDown || keys.right.isDown || keys.down.isDown || keys.up.isDown) {
+            return true;
+        } else return false
+    };
 
     // Sensor trigger between the player and objects.
     heroTouchingTrigger(playerSensor) {
