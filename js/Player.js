@@ -1,51 +1,15 @@
 import MatterEntity from "./MatterEntity.js";
 
 class PlayerState {
-    constructor(player) {
-        this.player = player
-    }
+    constructor(player) { this.player = player }
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
     get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
 
-    enter() {
-        // not implemented
-    }
-
-    exit() {
-        // not implemented
-    }
-
-    update() {
-        /* not implemented
-
-        if (we are pressing WASD) {
-            this.goto(this.runningState)
-
-        } else if (we are pressing spacebar) {
-            this.goto(this.attackingState)
-
-        } else (we are doing neither) {
-            this.goto(this.idleState)
-        }
-
-        if (we are pressing WASD and pressing shift) {
-            this.goto(this.walkingState)
-
-        }
-        */
-    }
-
-    handleKeys() {
-        // not implemented
-        /* Assuming this will handle ALL the key and/or future mouse inputs for ALL the states of the player.
-
-        this.runningState.handlekeys();
-        this.attackingState.handlekeys();
-        this.idleState.handlekeys();
-
-        */
-    }
+    enter() { } // not implemented
+    update() { } // not implemented
+    handleKeys() { } // not implemented
+    exit() { } // not implemented
 }
 
 class PlayerIdleState extends PlayerState {
@@ -60,7 +24,6 @@ class PlayerIdleState extends PlayerState {
     }
 };
 
-//Renamed PlayerWalkingState to PlayerRunningState to accurately describe that the player is running rather than walking.
 class PlayerRunningState extends PlayerState {
     enter() {
         this.player.anims.play("hero_run", true);
@@ -88,8 +51,6 @@ class PlayerRunningState extends PlayerState {
         }
     }
 };
-
-// Created PlayerWalkingState to handle the player walking state.
 
 class PlayerWalkingState extends PlayerState {
     enter() {
@@ -218,6 +179,21 @@ export default class Player extends MatterEntity {
         this.currentState = state;
         this.currentState.enter();
     }
+
+
+    // if(we are pressing WASD) {
+    //     this.goto(this.runningState)
+
+    // } else if(we are pressing spacebar) {
+    //     this.goto(this.attackingState)
+
+    // } else(we are doing neither) {
+    //     this.goto(this.idleState)
+    // }
+
+    // if(we are pressing WASD and pressing shift) {
+    //     this.goto(this.walkingState)
+    // }
 
     //Sensor Trigger between the player and objects.
     heroTouchingTrigger(playerSensor) {
