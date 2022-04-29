@@ -5,12 +5,12 @@ class PlayerState {
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
     get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
-    goto(state) { this.player.goto(state) }; // Like above, but for 'this.player.goto'
+    goto(state) { this.player.goto(state) }; // Like above, but for 'this.player.goto()'
 
-    enter() { } // not implemented
-    update() { } // not implemented
-    handleKeys() { } // not implemented
-    exit() { } // not implemented
+    enter() { } // not implemented, defines starting parameters
+    update() { } // not implemented, defines state behaviours
+    handleKeys() { } // not implemented, handles keypresses
+    exit() { } // not implemented, cleans up
 }
 
 class PlayerIdleState extends PlayerState {
@@ -41,6 +41,7 @@ class PlayerRunningState extends PlayerState {
     }
 
     handleKeys() {
+        // Movement
         if (this.player.inputKeys.left.isDown) {
             this.player.flipX = true;
             this.player.playerVelocity.x = -1;
@@ -56,6 +57,7 @@ class PlayerRunningState extends PlayerState {
             this.player.playerVelocity.y = 1;
         }
 
+        // Conditions for exit
         if (this.player.movementKeyIsDown() == false) this.goto(this.player.idleState);
     }
 
@@ -69,6 +71,8 @@ class PlayerAttackingState extends PlayerState {
         this.handleKeys();
         const frame = this.anims.currentFrame.textureFrame;
         let touchingTargets = this.touching.filter(target => target.hit && !target.dead);
+
+        // Whack stuff, really hard
         touchingTargets.forEach(target => {
             if (frame === 'hero_attack_6') {
                 this.attack_frame = false;
@@ -82,6 +86,7 @@ class PlayerAttackingState extends PlayerState {
     }
 
     handleKeys() {
+        // Conditions for exit
         if (this.player.inputKeys.space.isUp === true) {
             if (this.player.movementKeyIsDown() == true) this.goto(this.player.runningState); else this.goto(this.player.idleState);
         }
