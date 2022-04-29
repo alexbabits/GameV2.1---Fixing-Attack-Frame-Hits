@@ -15,13 +15,11 @@ class PlayerState {
 class PlayerIdleState extends PlayerState {
     enter() {
         this.player.anims.play('hero_idle', true);
-        this.player.playerVelocity.x = 0
-        this.player.playerVelocity.y = 0
+        this.player.playerVelocity.x = 0;
+        this.player.playerVelocity.y = 0;
     }
 
-    exit() {
-        this.player.anims.stop();
-    }
+    exit() { this.player.anims.stop(); }
 };
 
 class PlayerRunningState extends PlayerState {
