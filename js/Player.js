@@ -67,14 +67,14 @@ class PlayerAttackingState extends PlayerState {
 
     update() {
         this.handleKeys();
-        let touchingTargets = this.touching.filter(target => target.hit && target.alive);
-
+        const frame = this.anims.currentFrame.textureFrame;
+        let touchingTargets = this.touching.filter(target => target.hit && !target.dead);
         touchingTargets.forEach(target => {
             if (frame === 'hero_attack_6') {
                 this.attack_frame = false;
-            } else if (this.anims.currentFrame.textureFrame === 'hero_attack_5' && this.attack_frame === false) {
+            } else if (frame === 'hero_attack_5' && this.attack_frame === false) {
                 this.attack_frame = true;
-                target.hit;
+                target.hit();
             }
 
             if (target.dead === true) target.destroy();
@@ -82,7 +82,7 @@ class PlayerAttackingState extends PlayerState {
     }
 
     handleKeys() {
-        if (this.attack_frame === false) {
+        if (this.player.inputKeys.space.isUp === true) {
             if (this.player.movementKeyIsDown() == true) this.goto(this.player.runningState); else this.goto(this.player.idleState);
         }
     }
