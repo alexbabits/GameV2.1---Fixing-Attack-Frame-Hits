@@ -53,34 +53,6 @@ class PlayerRunningState extends PlayerState {
     exit() { this.anims.stop(); }
 };
 
-class PlayerWalkingState extends PlayerState {
-    enter() {
-        this.player.anims.play("hero_walk", true);
-    }
-
-    update() {
-        const speed = 2;
-        this.player.playerVelocity = new Phaser.Math.Vector2();
-        this.handleKeys();
-        this.player.playerVelocity.scale(speed);
-        this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);
-    }
-
-    handleKeys() {
-        if (this.player.inputKeys.left.isDown && this.player.inputKeys.shift.isDown) {
-            this.player.flipX = true;
-            this.player.playerVelocity.x = -1;
-        } else if (this.player.inputKeys.right.isDown && this.player.inputKeys.shift.isDown) {
-            this.player.flipX = false;
-            this.player.playerVelocity.x = 1;
-        } else if (this.player.inputKeys.up.isDown && this.player.inputKeys.shift.isDown) {
-            this.player.playerVelocity.y = -1;
-        } else if (this.player.inputKeys.down.isDown && this.player.inputKeys.shift.isDown) {
-            this.player.playerVelocity.y = 1;
-        }
-    }
-};
-
 class PlayerAttackingState extends PlayerState {
     enter() {
         this.player.anims.play("hero_attack", true);
@@ -139,7 +111,6 @@ export default class Player extends MatterEntity {
         this.attackingState = new PlayerAttackingState(this)
         this.idleState = new PlayerIdleState(this)
         this.runningState = new PlayerRunningState(this)
-        this.walkingState = new PlayerWalkingState(this)
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
         this.goto(this.idleState)
 
