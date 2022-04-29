@@ -6,7 +6,7 @@ class PlayerState {
     }
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
-    get touching() {export this.player.touching }; // Like above, but for 'this.player.touching'
+    get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
 
     enter() {
         // not implemented
@@ -56,7 +56,6 @@ class PlayerIdleState extends PlayerState {
     }
 
     exit() {
-        // stop the animation
         this.player.anims.stop();
     }
 };
@@ -164,7 +163,6 @@ class PlayerAttackingState extends PlayerState {
         });
         //console.log(this.anims) to see what's going on with all things related to our animation state.
     };
-
 };
 
 
@@ -174,6 +172,7 @@ export default class Player extends MatterEntity {
 
         super({ ...data, health: 20, drops: [], name: 'player' });
         this.touching = [];
+
         // Instantiating the different player states.
         this.attackingState = new PlayerAttackingState(this)
         this.idleState = new PlayerIdleState(this)
@@ -182,6 +181,7 @@ export default class Player extends MatterEntity {
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
         this.goto(this.idleState)
 
+        // TODO Move to attackState
         this.attack_frame = false;
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -220,7 +220,6 @@ export default class Player extends MatterEntity {
     }
 
     //Sensor Trigger between the player and objects.
-
     heroTouchingTrigger(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
@@ -243,7 +242,6 @@ export default class Player extends MatterEntity {
     };
 
     //Collider Trigger between the player and objects that can be picked up.
-
     createPickupCollisions(playerCollider) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerCollider],
@@ -260,8 +258,5 @@ export default class Player extends MatterEntity {
             },
             context: this.scene,
         });
-
     };
-
 };
-
