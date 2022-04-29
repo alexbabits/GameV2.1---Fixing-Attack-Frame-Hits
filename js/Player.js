@@ -54,38 +54,16 @@ class PlayerRunningState extends PlayerState {
 };
 
 class PlayerAttackingState extends PlayerState {
-    enter() {
-        this.player.anims.play("hero_attack", true);
-    }
+    enter() { this.player.anims.play("hero_attack", true); this.attack_frame = false; }
 
-    update() {
-        this.handleKeys();
-    }
+    update() { this.handleKeys(); }
 
-    handleKeys() {
-        if (this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
-            this.anims.play('hero_attack', true);
-            this.whackStuff();
-        } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
-            this.anims.play('hero_run', true);
-        } else {
-            this.anims.play('hero_idle', true);
-        }
+    handleKeys() { }
 
-        if (this.inputKeys.space.isDown === false) {
-            this.attack_frame = false
-        }
-    }
-
+    // TODO Use this
     whackStuff() {
         this.touching = this.touching.filter(gameObject => gameObject.hit && !gameObject.dead);
         this.touching.forEach(gameObject => {
-
-            /* We check if the current animation is hero attack 5 and if the flag is false (default). If it is, we immediately
-            turn it to true, and so the hit method gets called just for that first instance of hero attack 5.
-            Then we turn it back to false for the next anim and this process loops.
-            We found out we needed single '=' to reassign the flag's value. */
-
             if (this.anims.currentFrame.textureFrame === 'hero_attack_5' && this.attack_frame === false) {
                 this.attack_frame = true
                 gameObject.hit()
@@ -95,8 +73,9 @@ class PlayerAttackingState extends PlayerState {
 
             if (gameObject.dead) gameObject.destroy();
         });
-        //console.log(this.anims) to see what's going on with all things related to our animation state.
     };
+
+    exit() { this.anims.stop; this.attack_frame = false; }
 };
 
 
@@ -111,11 +90,9 @@ export default class Player extends MatterEntity {
         this.attackingState = new PlayerAttackingState(this)
         this.idleState = new PlayerIdleState(this)
         this.runningState = new PlayerRunningState(this)
+
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
         this.goto(this.idleState)
-
-        // TODO Move to attackState
-        this.attack_frame = false;
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y, 22, 32, { chamfer: { radius: 10 }, isSensor: false, label: 'playerCollider' });
@@ -128,7 +105,6 @@ export default class Player extends MatterEntity {
         this.setFixedRotation();
         this.heroTouchingTrigger(playerSensor);
         this.createPickupCollisions(playerCollider);
-
     };
 
     static preload(scene) {
@@ -165,6 +141,16 @@ export default class Player extends MatterEntity {
 
     // if(we are pressing WASD and pressing shift) {
     //     this.goto(this.walkingState)
+    // }
+
+    // This should be converted into goto() logic
+    // if (this.inputKeys.space.isDown && playerVelocity.x === 0 && playerVelocity.y === 0) {
+    //     this.anims.play('hero_attack', true);
+    //     this.whackStuff();
+    // } else if (Math.abs(playerVelocity.x) !== 0 || (Math.abs(playerVelocity.y !== 0))) {
+    //     this.anims.play('hero_run', true);
+    // } else {
+    //     this.anims.play('hero_idle', true);
     // }
 
     //Sensor Trigger between the player and objects.
