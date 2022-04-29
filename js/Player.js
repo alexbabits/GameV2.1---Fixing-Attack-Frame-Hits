@@ -5,7 +5,7 @@ class PlayerState {
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
     get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
-    get goto() { return this.player.goto() }; // Like above, but for 'this.player.goto'
+    goto(state) { this.player.goto(state) }; // Like above, but for 'this.player.goto'
 
     enter() { } // not implemented
     update() { } // not implemented
