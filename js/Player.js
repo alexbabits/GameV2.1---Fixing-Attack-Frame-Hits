@@ -5,6 +5,7 @@ class PlayerState {
 
     get anims() { return this.player.anims }; // Allows us to use 'this.anims' rather than 'this.player.anims' in our subclasses
     get touching() { return this.player.touching }; // Like above, but for 'this.player.touching'
+    get goto() { return this.player.goto() }; // Like above, but for 'this.player.goto'
 
     enter() { } // not implemented
     update() { } // not implemented
@@ -14,16 +15,25 @@ class PlayerState {
 
 class PlayerIdleState extends PlayerState {
     enter() {
-        this.player.anims.play('hero_idle', true);
+        this.anims.play('hero_idle', true);
         this.player.playerVelocity.x = 0;
         this.player.playerVelocity.y = 0;
     }
 
-    exit() { this.player.anims.stop(); }
+    handleKeys() {
+        for (key in [left, right, up, down]) if (this.player.inputKeys.$key.isDown) {
+            this.goto(this.player.runningState);
+        }
+        if (this.player.inputKeys.space.isDown) {
+            this.goto(this.player.attackingState);
+        }
+    }
+
+    exit() { this.anims.stop(); }
 };
 
 class PlayerRunningState extends PlayerState {
-    enter() { this.player.anims.play("hero_run", true); }
+    enter() { this.anims.play("hero_run", true); }
 
     update() {
         const speed = 4;
@@ -54,9 +64,11 @@ class PlayerRunningState extends PlayerState {
 };
 
 class PlayerAttackingState extends PlayerState {
-    enter() { this.player.anims.play("hero_attack", true); this.attack_frame = false; }
+    enter() { this.anims.play("hero_attack", true); this.attack_frame = false; }
 
-    update() { this.handleKeys(); }
+    update() {
+        this.handleKeys();
+    }
 
     handleKeys() { }
 
