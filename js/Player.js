@@ -82,29 +82,41 @@ class PlayerAttackingState extends PlayerState {
 export default class Player extends MatterEntity {
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
-
         super({ ...data, health: 20, drops: [], name: 'player' });
-        this.touching = [];
 
-        // Instantiating the different player states.
-        this.attackingState = new PlayerAttackingState(this)
+        // Bodies
+        const { Body, Bodies } = Phaser.Physics.Matter.Matter;
+        let playerCollider = Bodies.rectangle(this.x, this.y, 22, 32,
+            {
+                chamfer: { radius: 10 }, isSensor: false, label: 'playerCollider'
+            }
+        );
+        let playerSensor = Bodies.rectangle(this.x, this.y, 46, 8,
+            {
+                isSensor: true, label: 'playerSensor'
+            }
+        );
+        const compoundBody = Body.create(
+            {
+                parts: [playerCollider, playerSensor],
+                frictionAir: 0.35,
+            }
+        );
+
+        // For collisions?
+        this.setFixedRotation();
+        this.touching = [];
+        this.heroTouchingTrigger(playerSensor);
+        this.createPickupCollisions(playerCollider);
+        this.setExistingBody(compoundBody);
+
+        // Instantiating PlayerStates.
         this.idleState = new PlayerIdleState(this)
+        this.attackingState = new PlayerAttackingState(this)
         this.runningState = new PlayerRunningState(this)
 
         // Initializing the default state of idleState, by invoking our goto method which calls the enter method for idleState.
         this.goto(this.idleState)
-
-        const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.rectangle(this.x, this.y, 22, 32, { chamfer: { radius: 10 }, isSensor: false, label: 'playerCollider' });
-        let playerSensor = Bodies.rectangle(this.x, this.y, 46, 8, { isSensor: true, label: 'playerSensor' });
-        const compoundBody = Body.create({
-            parts: [playerCollider, playerSensor],
-            frictionAir: 0.35,
-        });
-        this.setExistingBody(compoundBody);
-        this.setFixedRotation();
-        this.heroTouchingTrigger(playerSensor);
-        this.createPickupCollisions(playerCollider);
     };
 
     static preload(scene) {
@@ -114,12 +126,10 @@ export default class Player extends MatterEntity {
         scene.load.audio('player', 'assets/audio/player.mp3');
     }
 
-    //Since we have all our states instantiated on the player, we can simply invoke the update method on the currentState.
-    update() {
-        this.currentState.update();
-    };
+    // Since we have all our states instantiated on the player, we can simply invoke the update method on the currentState.
+    update() { this.currentState.update(); };
 
-    //Our goto method, it handles the changing of our player's current state (.attackingState, .idleState, .runningState, etc.).
+    // Our goto method handles PlayerState changes.
     goto(state) {
         if (this.currentState) {
             this.currentState.exit();
@@ -128,7 +138,7 @@ export default class Player extends MatterEntity {
         this.currentState.enter();
     }
 
-
+    // TODO use the goto(), managing states
     // if(we are pressing WASD) {
     //     this.goto(this.runningState)
 
@@ -153,44 +163,52 @@ export default class Player extends MatterEntity {
     //     this.anims.play('hero_idle', true);
     // }
 
-    //Sensor Trigger between the player and objects.
+    // Sensor trigger between the player and objects.
     heroTouchingTrigger(playerSensor) {
-        this.scene.matterCollision.addOnCollideStart({
-            objectA: [playerSensor],
-            callback: other => {
-                if (other.bodyB.isSensor) return;
-                this.touching.push(other.gameObjectB);
-                console.log(this.touching.length, other.gameObjectB.name);
-            },
-            context: this.scene,
-        });
+        this.scene.matterCollision.addOnCollideStart(
+            {
+                objectA: [playerSensor],
+                callback: other => {
+                    if (other.bodyB.isSensor) return;
+                    this.touching.push(other.gameObjectB);
+                    console.log(this.touching.length, other.gameObjectB.name);
+                },
+                context: this.scene
+            }
+        );
 
-        this.scene.matterCollision.addOnCollideEnd({
-            objectA: [playerSensor],
-            callback: other => {
-                this.touching = this.touching.filter(gameObject => gameObject != other.gameObjectB);
-                console.log(this.touching.length);
-            },
-            context: this.scene,
-        });
+        this.scene.matterCollision.addOnCollideEnd(
+            {
+                objectA: [playerSensor],
+                callback: other => {
+                    this.touching = this.touching.filter(gameObject => gameObject != other.gameObjectB);
+                    console.log(this.touching.length);
+                },
+                context: this.scene,
+            }
+        );
     };
 
-    //Collider Trigger between the player and objects that can be picked up.
+    //Collision trigger between the player and objects that can be picked up.
     createPickupCollisions(playerCollider) {
-        this.scene.matterCollision.addOnCollideStart({
-            objectA: [playerCollider],
-            callback: other => {
-                if (other.gameObjectB && other.gameObjectB.pickup) other.gameObjectB.pickup();
-            },
-            context: this.scene,
-        });
+        this.scene.matterCollision.addOnCollideStart(
+            {
+                objectA: [playerCollider],
+                callback: other => {
+                    if (other.gameObjectB && other.gameObjectB.pickup) other.gameObjectB.pickup();
+                },
+                context: this.scene,
+            }
+        );
 
-        this.scene.matterCollision.addOnCollideActive({
-            objectA: [playerCollider],
-            callback: other => {
-                if (other.gameObjectB && other.gameObjectB.pickup) other.gameObjectB.pickup();
-            },
-            context: this.scene,
-        });
+        this.scene.matterCollision.addOnCollideActive(
+            {
+                objectA: [playerCollider],
+                callback: other => {
+                    if (other.gameObjectB && other.gameObjectB.pickup) other.gameObjectB.pickup();
+                },
+                context: this.scene,
+            }
+        );
     };
 };
