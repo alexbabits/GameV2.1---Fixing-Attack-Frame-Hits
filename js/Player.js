@@ -67,7 +67,7 @@ class PlayerAttackingState extends PlayerState {
 
     update() {
         this.handleKeys();
-        let touchingTargets = this.touching.filter(gameObject.hit && gameObject.alive);
+        let touchingTargets = this.touching.filter(target => target.hit && target.alive);
 
         touchingTargets.forEach(target => {
             if (frame === 'hero_attack_6') {
