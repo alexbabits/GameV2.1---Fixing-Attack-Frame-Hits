@@ -20,6 +20,8 @@ class PlayerIdleState extends PlayerState {
         this.player.playerVelocity.y = 0;
     }
 
+    update() { this.handleKeys(); }
+
     handleKeys() {
         for (key in [left, right, up, down]) if (this.player.inputKeys.$key.isDown) {
             this.goto(this.player.runningState);
@@ -36,9 +38,9 @@ class PlayerRunningState extends PlayerState {
     enter() { this.anims.play("hero_run", true); }
 
     update() {
+        this.handleKeys();
         const speed = 4;
         this.player.playerVelocity = new Phaser.Math.Vector2();
-        this.handleKeys();
         this.player.playerVelocity.scale(speed);
         this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);
     }
@@ -66,9 +68,7 @@ class PlayerRunningState extends PlayerState {
 class PlayerAttackingState extends PlayerState {
     enter() { this.anims.play("hero_attack", true); this.attack_frame = false; }
 
-    update() {
-        this.handleKeys();
-    }
+    update() { this.handleKeys(); }
 
     handleKeys() { }
 
