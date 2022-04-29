@@ -37,8 +37,6 @@ class PlayerRunningState extends PlayerState {
 
     update() {
         this.handleKeys();
-        const speed = 4;
-        this.player.playerVelocity.scale(speed);
         this.player.setVelocity(this.player.playerVelocity.x, this.player.playerVelocity.y);
     }
 
@@ -118,6 +116,8 @@ export default class Player extends MatterEntity {
         );
 
         this.playerVelocity = new Phaser.Math.Vector2();
+        const speed = 4;
+        this.playerVelocity.scale(speed);
 
         // For collisions?
         this.setFixedRotation();
